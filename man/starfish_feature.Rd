@@ -10,7 +10,9 @@ starfish_feature(
   cnv_file,
   gender_file,
   prefix = "",
-  genome_v = "hg19"
+  genome_v = "hg19",
+  cnv_factor = 0.15,
+  arm_del_rm = TRUE
 )
 }
 \arguments{
@@ -25,9 +27,13 @@ starfish_feature(
 \item{prefix}{the prefix for all intermediate files, default is none}
 
 \item{genome_v}{which genome assembly was used to call SV and CNV. It should be "hg19" or "hg38", default is "hg19"}
+
+\item{cnv_factor}{the tolerant factor to identify loss and gain fragments for samples with decimal CN, default is 0.15}
+
+\item{arm_del_rm}{the logical value of removing arm level deletion or not, default is TRUE}
 }
 \value{
-a list of files: $cluster_feature is the CGR region vs. feature matrix,$cnv_baseline is the cnv file with baseline annotation.
+a list of files: $cluster_feature is the CGR region vs. feature matrix,$cnv_baseline is the cnv file with baseline annotation
 }
 \description{
 This function loads "connected" CGR regions and complex SVs reported by starfish_link, then combines CNV calls and sample gender to construct a CGR region vs. feature matrix for downstream clustering and classification.

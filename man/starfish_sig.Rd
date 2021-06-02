@@ -7,7 +7,7 @@
 starfish_sig(
   cluster_feature,
   prefix = "",
-  class_method = "class",
+  cmethod = "class",
   pcawg_feature = pcawg_chrss_raw,
   class_model = nn_model
 )
@@ -17,7 +17,7 @@ starfish_sig(
 
 \item{prefix}{prefix for intermediate files, default is none}
 
-\item{class_method}{"class" based on a pre-constructed classifier or "cluster" based on de-novo unsupervised clustering, default is "class"}
+\item{cmethod}{"class" based on a pre-constructed classifier or "cluster" based on de-novo unsupervised clustering, default is "class"}
 }
 \value{
 The signature classification table and plot if "class" is selected.The clustering results are stored under "CGR_cluster" folder if "cluster" is selected. $cluster_id contains CGR event IDs, and  $CGR_signature shows the signature names used in the PCAWG paper.

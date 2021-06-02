@@ -5,10 +5,10 @@
 #'
 #' @param cluster_feature the CGR feature matrix, output from starfish_feature
 #' @param prefix prefix for intermediate files, default is none
-#' @param class_method "class" based on a pre-constructed classifier or "cluster" based on de-novo unsupervised clustering, default is "class"
+#' @param cmethod "class" based on a pre-constructed classifier or "cluster" based on de-novo unsupervised clustering, default is "class"
 #' @return The signature classification table and plot if "class" is selected.The clustering results are stored under "CGR_cluster" folder if "cluster" is selected. $cluster_id contains CGR event IDs, and  $CGR_signature shows the signature names used in the PCAWG paper.
 #' @export
-starfish_sig=function(cluster_feature,prefix="",class_method="class",pcawg_feature=pcawg_chrss_raw,class_model=nn_model){
+starfish_sig=function(cluster_feature,prefix="",cmethod="class",pcawg_feature=pcawg_chrss_raw,class_model=nn_model){
 
   chrss_select=cluster_feature
 
@@ -43,7 +43,7 @@ starfish_sig=function(cluster_feature,prefix="",class_method="class",pcawg_featu
   chrss_select_scale=chrss_select_all[chrss_select_all$dataset=="non-pcawg",]
 
   ######### classifier ###########
-  if (class_method=="class") {
+  if (cmethod=="class") {
 
 
 
@@ -118,7 +118,7 @@ starfish_sig=function(cluster_feature,prefix="",class_method="class",pcawg_featu
     filename=ifelse(prefix=="","pcawg_6signatures_class.csv",paste0(prefix,"_pcawg_6signatures_class.csv"))
     write.csv(chrss_class_select,filename,row.names = F)
     return(chrss_class_select)
-  } else if (class_method=="cluster") {
+  } else if (cmethod=="cluster") {
 
     feature_vector=c("Brk_dispersion_MAD_mean_total","Loss_size_percentage","Gain_size_percentage","log_max_CN","max_telo_loss_percentage")
     chrss_cluster=chrss_select_scale[c("cluster_id",feature_vector)]
@@ -134,7 +134,7 @@ starfish_sig=function(cluster_feature,prefix="",class_method="class",pcawg_featu
     print("Clustering is done!")
 }
 
-  } else if (class_method!="class"|class_method!="cluster") {
+  } else if (cmethod!="class"|cmethod!="cluster") {
 
     print("Wrong method, please select from 'class' or 'cluster'.")
 

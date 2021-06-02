@@ -68,7 +68,8 @@ if(genome_v=="hg19"){
   }
 
 
-GenomeInfoDb::seqlevelsStyle(genome) <- "NCBI"
+# GenomeInfoDb::seqlevelsStyle(genome) <- "NCBI"
+genome@seqnames=gsub("chr","",genome@seqnames)
 chromosomes = as.character(c(seq(22), "X"))
 genome = genome[chromosomes]
 
