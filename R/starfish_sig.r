@@ -131,7 +131,7 @@ starfish_sig=function(cluster_feature,prefix="",cmethod="class",pcawg_feature=pc
     } else {
     ########### ConsensusCluster ########
     cluster_results = ConsensusClusterPlus(ssnmfw2,maxK=10,reps=5000,pItem=0.9,pFeature=1,clusterAlg="pam",distance="euclidean",innerLinkage = "ward.D2",finalLinkage = "ward.D2",plot="pdf",writeTable=TRUE,title="CGR_cluster")
-    print("Clustering is done!")
+    print("Clustering is done! The clustering results are stored under 'CGR_cluster' folder!")
 }
 
   } else if (cmethod!="class"|cmethod!="cluster") {
