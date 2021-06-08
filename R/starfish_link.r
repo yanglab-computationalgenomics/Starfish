@@ -3,7 +3,7 @@
 #' This function loads a SV dataframe and generates "seed" CGR regions, "connected" CGR regions, and complex SVs.
 #'
 #'
-#' @param sv_file a SV dataframe with 8 columns: "chrom1","end1", "chrom2","end2","svtype" (DEL,DUP,h2hINV,t2tINV,TRA),"strand1" (+/-) and "strand2" (+/-),"sample". Other svtypes like INV, INS, BND are not accepted
+#' @param sv_file a SV dataframe with 8 columns: "chrom1","pos1", "chrom2","pos2","svtype" (DEL,DUP,h2hINV,t2tINV,TRA),"strand1" (+/-) and "strand2" (+/-),"sample". Other svtypes like INV, INS, BND are not accepted
 #' @param prefix the prefix for all intermediate files, default is none
 #' @return a list of files: $interleave_tra_complex_sv contains complex SVs, $mergecall contains "seed" CGR regions, and $starfish_call contains "connected" CGR regions.
 #' @export
@@ -21,6 +21,8 @@ starfish_link=function(sv_file,prefix=""){
   cnvtotal[1,]=c("X","0","1","0")
   ##############################
   svtotal <-svtotal[(svtotal$chrom1 %in% chrlist & svtotal$chrom2 %in% chrlist),]
+  svtotal$end1=svtotal$pos1
+  svtotal$end2=svtotal$pos2
   samplelist=unique(svtotal$sample)
 
   ss6=data.frame()
@@ -343,6 +345,13 @@ starfish_link=function(sv_file,prefix=""){
 
 
   smatrix2=unique(ssmatrix)
+  colnames(smatrix2)=c("chrom1","pos1","chrom2","pos2","svtype","complex","sample")
+  mergecall$call3=gsub("chrss","CGR",mergecall$call3)
+  mergecall$call6=gsub("chrss","CGR",mergecall$call6)
+
+  colnames(chrsslink1)=c("chr","start","end","CGR_chr","sample","format_id","CGR_status","link_chromosome","cluster_id")
+  chrsslink1$CGR_status=gsub("chrss","CGR",chrsslink1$CGR_status)
+  chrsslink1=chrsslink1[c("chr","start","end","sample","CGR_status","link_chromosome","cluster_id")]
 
   starfish_list=list("ss6"=ss6,"ss3"=ss3,"interleave_sv"=interleave_sv_total,"interleave_tra_complex_sv"=smatrix2,"shattercall6"=shattercall6,"shattercall3"=shattercall3,"mergecall"=mergecall,"starfish_call"=chrsslink1)
 

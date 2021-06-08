@@ -12,14 +12,14 @@ starfish_sig=function(cluster_feature,prefix="",cmethod="class",pcawg_feature=pc
 
   chrss_select=cluster_feature
 
-  chrss_select$log2_CN_state=ifelse(chrss_select$CN_state!=0,log(chrss_select$CN_state,2),0)
+  # chrss_select$log2_CN_state=ifelse(chrss_select$CN_state!=0,log(chrss_select$CN_state,2),0)
   chrss_select$log_max_CN=ifelse(chrss_select$max_CNV!=0,log(chrss_select$max_CNV,10),0)
 
-  chrss_select$Loss_number_10Mb=ifelse(chrss_select$Loss_number_10Mb!=0,chrss_select$Loss_number_10Mb,min(chrss_select$Loss_number_10Mb[chrss_select$Loss_number_10Mb!=min(chrss_select$Loss_number_10Mb)])/10)
-  chrss_select$Gain_number_10Mb=ifelse(chrss_select$Gain_number_10Mb!=0,chrss_select$Gain_number_10Mb,min(chrss_select$Gain_number_10Mb[chrss_select$Gain_number_10Mb!=min(chrss_select$Gain_number_10Mb)])/10)
+  # chrss_select$Loss_number_10Mb=ifelse(chrss_select$Loss_number_10Mb!=0,chrss_select$Loss_number_10Mb,min(chrss_select$Loss_number_10Mb[chrss_select$Loss_number_10Mb!=min(chrss_select$Loss_number_10Mb)])/10)
+  # chrss_select$Gain_number_10Mb=ifelse(chrss_select$Gain_number_10Mb!=0,chrss_select$Gain_number_10Mb,min(chrss_select$Gain_number_10Mb[chrss_select$Gain_number_10Mb!=min(chrss_select$Gain_number_10Mb)])/10)
 
-  chrss_select$Loss_number_10Mb_log=log(chrss_select$Loss_number_10Mb,10)
-  chrss_select$Gain_number_10Mb_log=log(chrss_select$Gain_number_10Mb,10)
+  # chrss_select$Loss_number_10Mb_log=log(chrss_select$Loss_number_10Mb,10)
+  # chrss_select$Gain_number_10Mb_log=log(chrss_select$Gain_number_10Mb,10)
 
   chrss_select$dataset="non-pcawg"
 
@@ -116,6 +116,8 @@ starfish_sig=function(cluster_feature,prefix="",cmethod="class",pcawg_feature=pc
     print("Signature classification is done!")
 
     filename=ifelse(prefix=="","pcawg_6signatures_class.csv",paste0(prefix,"_pcawg_6signatures_class.csv"))
+
+    chrss_class_select=chrss_class_select[,c(1:6,13)]
     write.csv(chrss_class_select,filename,row.names = F)
     return(chrss_class_select)
   } else if (cmethod=="cluster") {
@@ -130,7 +132,8 @@ starfish_sig=function(cluster_feature,prefix="",cmethod="class",pcawg_feature=pc
       print("Too few samples to run clustering, please try with at least 10 samples or run classification with 'class'.")
     } else {
     ########### ConsensusCluster ########
-    cluster_results = ConsensusClusterPlus(ssnmfw2,maxK=10,reps=5000,pItem=0.9,pFeature=1,clusterAlg="pam",distance="euclidean",innerLinkage = "ward.D2",finalLinkage = "ward.D2",plot="pdf",writeTable=TRUE,title="CGR_cluster")
+      knumber=min(ncol(ssnmfw2)-3,20)
+    cluster_results = ConsensusClusterPlus(ssnmfw2,maxK=as.integer(knumber),reps=5000,pItem=0.9,pFeature=1,clusterAlg="pam",distance="euclidean",innerLinkage = "ward.D2",finalLinkage = "ward.D2",plot="pdf",writeTable=TRUE,title="CGR_cluster")
     print("Clustering is done! The clustering results are stored under 'CGR_cluster' folder!")
 }
 

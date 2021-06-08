@@ -32,7 +32,8 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
   cgr=merge(cgr,unique(chrlength[c("chrom","chr_size")]),by.x=("chr"),by.y=("chrom"))
   samplelist=unique(cgr$cluster_id)
 
-
+  complex_sv$end1=complex_sv$pos1
+  complex_sv$end2=complex_sv$pos2
   complex_sv$start1=complex_sv$end1-1
   complex_sv$start2=complex_sv$end2-1
   complex_sv=complex_sv[complex_sv$sample %in% cgr$sample,]
@@ -433,7 +434,9 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
     }
   }
 print("CGR feature computing is done!")
- chrss_cluster_feature=list("cluster_feature"=cluster,"cnv_baseline"=cnvtotal)
+cluster=cluster[c("sample","cluster_id","max_CNV","Loss_size_percentage","Gain_size_percentage","max_telo_loss_percentage","Brk_dispersion_MAD_mean_total")]
+ # chrss_cluster_feature=list("cluster_feature"=cluster,"cnv_baseline"=cnvtotal)
+ chrss_cluster_feature=list("cluster_feature"=cluster)
  filename=ifelse(prefix=="","CGR_feature_matrix.csv",paste0(prefix,"_CGR_feature_matrix.csv"))
  write.csv(cluster,filename,row.names = F)
  return (chrss_cluster_feature)

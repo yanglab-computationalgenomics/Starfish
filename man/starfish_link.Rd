@@ -7,7 +7,7 @@
 starfish_link(sv_file, prefix = "")
 }
 \arguments{
-\item{sv_file}{a SV dataframe with 8 columns: "chrom1","end1", "chrom2","end2","svtype" (DEL,DUP,h2hINV,t2tINV,TRA),"strand1" (+/-) and "strand2" (+/-),"sample". Other svtypes like INV, INS, BND are not accepted}
+\item{sv_file}{a SV dataframe with 8 columns: "chrom1","pos1", "chrom2","pos2","svtype" (DEL,DUP,h2hINV,t2tINV,TRA),"strand1" (+/-) and "strand2" (+/-),"sample". Other svtypes like INV, INS, BND are not accepted}
 
 \item{prefix}{the prefix for all intermediate files, default is none}
 }
