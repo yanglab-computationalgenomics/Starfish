@@ -22,10 +22,10 @@ sv_file$chrom1=as.character(sv_file$chrom1)
 sv_file$chrom1=gsub("Chr|chr","",sv_file$chrom1)
 sv_file$chrom2=as.character(sv_file$chrom2)
 sv_file$chrom2=gsub("Chr|chr","",sv_file$chrom2)
+sv_file$end1=sv_file$pos1
+sv_file$end2=sv_file$pos2
 cnv_total=cnv_file[cnv_file$chromosome %in% chrlist,]
 cnv_total=cnv_total[order(cnv_total$sample,cnv_total$start,cnv_total$total_cn),]
-
-
 chrss=cgr
 
 if(nrow(cnv_total[!cnv_total$sample %in% chrss$sample, ])>0){
@@ -259,8 +259,8 @@ for (j in 1:length(cluster_list)){
     region$chr=gsub("23","X",region$chr)
 
 
-    link_region=region[region$chrss_status=="link",]
-    chrss_region=region[region$chrss_status=="chrss",]
+    link_region=region[region$CGR_status=="link",]
+    chrss_region=region[region$CGR_status=="CGR",]
 
 
     title_text=paste0(unique(chrss_j$histology_abbreviation)," ", unique(chrss_j$sample))
