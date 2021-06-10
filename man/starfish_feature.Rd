@@ -11,7 +11,7 @@ starfish_feature(
   gender_file,
   prefix = "",
   genome_v = "hg19",
-  cnv_factor = 0.15,
+  cnv_factor = 0,
   arm_del_rm = TRUE
 )
 }
@@ -28,7 +28,7 @@ starfish_feature(
 
 \item{genome_v}{which genome assembly was used to call SV and CNV. It should be "hg19" or "hg38", default is "hg19"}
 
-\item{cnv_factor}{the CN fluctuation beyond or below baseline to identify loss and gain fragments for samples with decimal CN, default is 0.15}
+\item{cnv_factor}{the CN fluctuation beyond or below baseline to identify loss and gain fragments for samples with decimal CN, default is 0}
 
 \item{arm_del_rm}{the logical value of removing arm level deletion or not, default is TRUE}
 }
