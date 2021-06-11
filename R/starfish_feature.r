@@ -5,15 +5,15 @@
 #' @param cgr "connected" CGR regions, which is the output of starfish_link_out$starfish_call
 #' @param complex_sv complex SVs, which is the output from starfish_link_out$interleave_tra_complex_sv
 #' @param cnv_file a CNV dataframe with 5 columns: "chromosome","start","end","total_cn", and "sample". "total_cn" should contain absolute copy numbers
-#' @param gender_file a sample table with 2 columns: "sample" and "gender" ("Female, "female","F","f","Male","male","M","m"). If gender is unknown, any other characters could be put here like "unknown"
+#' @param gender_file a sample table with 2 columns: "sample" and "gender". Gender could be "Female, "female","F","f","Male","male","M", or "m". If the gender is unknown, any other characters could be given, such as "unknown", and the gender will be inferred by the CN baseline of chromosome X
 #' @param prefix the prefix for all intermediate files, default is none
 #' @param genome_v which genome assembly was used to call SV and CNV. It should be "hg19" or "hg38", default is "hg19"
-#' @param cnv_factor the CN fluctuation beyond or below baseline to identify loss and gain fragments for samples with decimal CN, default is 0
+#' @param cnv_factor the CN fluctuation beyond or below baseline to identify loss and gain fragments for samples with decimal CN, default is "auto", or users can provide a value between 0 and 1
 #' @param arm_del_rm the logical value of removing arm level deletion or not, default is TRUE
 #' @return a list of files: $cluster_feature is the CGR region vs. feature matrix,$cnv_baseline is the cnv file with baseline annotation
 #' @export
 
-starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v="hg19",cnv_factor=0,arm_del_rm=TRUE){
+starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v="hg19",cnv_factor="auto",arm_del_rm=TRUE){
   print("Starfish is computing the feature matrix, please be patient...")
 
   if(genome_v=="hg19"){
@@ -115,9 +115,8 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
 
     donor_sex=cluster$gender[i]
     if(!donor_sex %in% c("Female","Male")){
-      print (paste0("There is no gender information for sample ",cluster$sample[i],", uses Female as default"))
+      print (paste0("There is no gender information for sample ",cluster$sample[i],", will infer the gender based on CN of chromosome X"))
     }
-    donor_sex=ifelse((!donor_sex %in% c("Female","Male")),"Female",donor_sex)
 
     chrn=length(unique(chrss_cluster$chr))
     cluster$chrss_chr_number[i]=chrn
@@ -130,7 +129,6 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
 
 
     cnv=cnv_total[cnv_total$sample==cluster$sample[i],]
-    cnv=cnv[cnv$chromosome %in% chrss_cluster$chr,]
     cnv=na.omit(cnv)
     cnv$ovl=0
     cnv$telo_loss=0
@@ -172,6 +170,11 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
       cnv_integer=sum(cnv$total_cn %%1)
       cnv_integer=ifelse(cnv_integer>0,"decimal","integer")
 
+      donor_sex=ifelse(nrow(cnv[cnv$chromosome=="X",])>0,donor_sex,"Male")
+      cnv_raw=cnv
+      cnv=cnv[cnv$chromosome %in% chrss_cluster$chr,]
+
+      if(cnv_factor=="auto"){
       if(cnv_integer=="integer"){
       # if (donor_sex=="Male"){
       #   cnv$copy_loss=ifelse((cnv$total_cn<cnv$background_cnv|(cnv$chromosome!="X"&cnv$total_cn<2)|(cnv$chromosome=="X"&cnv$total_cn<1)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv)&((cnv$chromosome=="X"&cnv$total_cn>1)|(cnv$chromosome!="X"&cnv$total_cn>2)) ,"gain","neutral"))
@@ -180,8 +183,16 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
       #   cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv)|cnv$total_cn<2),"deletion",ifelse(cnv$total_cn>(cnv$background_cnv)&cnv$total_cn>2,"gain","neutral"))
       #
       # }
+        cnv_factor=0
         loss_factor=1-cnv_factor
         gain_factor=1+cnv_factor
+        #### infer gender based on CN of X ####
+        if (donor_sex!="Male"&donor_sex!="Female"){
+          donor_sex=ifelse((unique(cnv_raw[cnv_raw$chromosome=="X",]$background_cnv)<=1*gain_factor&unique(cnv_raw[cnv_raw$chromosome=="X",]$background_cnv)>=1*loss_factor),"Male","Female")
+          print(paste0("Sample gender is inferred as ",donor_sex,"!"))
+        }
+
+
         if (donor_sex=="Male"){
 
           cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$total_cn>2*gain_factor)) ,"gain","neutral"))
@@ -193,8 +204,14 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
         }
 
       } else if(cnv_integer=="decimal") {
+        cnv_factor=0.15
         loss_factor=1-cnv_factor
         gain_factor=1+cnv_factor
+
+        if (donor_sex!="Male"&donor_sex!="Female"){
+          donor_sex=ifelse((unique(cnv_raw[cnv_raw$chromosome=="X",]$background_cnv)<=1*gain_factor&unique(cnv_raw[cnv_raw$chromosome=="X",]$background_cnv)>=1*loss_factor),"Male","Female")
+          print(paste0("Sample gender is inferred as ",donor_sex,"!"))
+        }
         if (donor_sex=="Male"){
 
           cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$total_cn>2*gain_factor)) ,"gain","neutral"))
@@ -204,6 +221,27 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
           cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|cnv$total_cn<2*loss_factor),"deletion",ifelse(cnv$total_cn>(cnv$background_cnv*gain_factor)&cnv$total_cn>2*gain_factor,"gain","neutral"))
 
         }
+      }
+      } else if (as.numeric(cnv_factor)>=0&as.numeric(cnv_factor)<1) {
+        loss_factor=1-cnv_factor
+        gain_factor=1+cnv_factor
+
+        if (donor_sex!="Male"&donor_sex!="Female"){
+          donor_sex=ifelse((unique(cnv_raw[cnv_raw$chromosome=="X",]$background_cnv)<=1*gain_factor&unique(cnv_raw[cnv_raw$chromosome=="X",]$background_cnv)>=1*loss_factor),"Male","Female")
+          print(paste0("Sample gender is inferred as ",donor_sex,"!"))
+        }
+        if (donor_sex=="Male"){
+
+          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$total_cn>2*gain_factor)) ,"gain","neutral"))
+
+        } else {
+
+          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|cnv$total_cn<2*loss_factor),"deletion",ifelse(cnv$total_cn>(cnv$background_cnv*gain_factor)&cnv$total_cn>2*gain_factor,"gain","neutral"))
+
+        }
+
+      } else {
+        print("Value out of range! 'cnv_factor' should be larger or equal to 0 and less than 1")
       }
 
 

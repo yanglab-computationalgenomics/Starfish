@@ -10,7 +10,7 @@ starfish_all(
   gender_file,
   prefix = "",
   genome_v = "hg19",
-  cnv_factor = 0,
+  cnv_factor = "auto",
   arm_del_rm = TRUE,
   plot = TRUE,
   cmethod = "class"
@@ -21,13 +21,13 @@ starfish_all(
 
 \item{cnv_file}{a CNV dataframe with 5 columns: "chromosome","start","end","total_cn", and "sample". "total_cn" should contain absolute copy numbers.}
 
-\item{gender_file}{a sample table with 2 columns: "sample" and "gender" ("Female, "female","F","f","Male","male","M","m"). If gender is unknown, any other characters could be put here like "unknown".}
+\item{gender_file}{a sample table with 2 columns: "sample" and "gender". Gender could be "Female, "female","F","f","Male","male","M", or "m". If the gender is unknown, any other characters could be given, such as "unknown", and the gender will be inferred by the CN baseline of chromosome X}
 
 \item{prefix}{the prefix for all intermediate files, default is none}
 
 \item{genome_v}{which genome assembly was used to call SV and CNV. It should be "hg19" or "hg38", default is "hg19"}
 
-\item{cnv_factor}{the CN fluctuation beyond or below baseline to identify loss and gain fragments for samples with decimal CN, default is 0}
+\item{cnv_factor}{the CN fluctuation beyond or below baseline to identify loss and gain fragments for samples with decimal CN, default is "auto", or users can provide a value between 0 and 1}
 
 \item{arm_del_rm}{the logical value of removing arm level deletion or not, default is TRUE}
 
