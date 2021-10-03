@@ -1,5 +1,5 @@
 # Starfish
-Version 0.1
+Version 0.11
 
 Starfish is an R package to infer complex genomic rearrangements signatures. 
 

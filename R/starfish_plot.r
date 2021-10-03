@@ -14,7 +14,7 @@
 starfish_plot=function(sv_file,cnv_file,cgr,genome_v="hg19"){
 
 `%!in%` = Negate(`%in%`)
-chrlist=c(as.character(1:22),"X")
+chrlist=c(as.character(1:22),"X","Y")
 
 cnv_file$chromosome=as.character(cnv_file$chromosome)
 cnv_file$chromosome=gsub("Chr|chr","",cnv_file$chromosome)
@@ -70,7 +70,7 @@ if(genome_v=="hg19"){
 
 # GenomeInfoDb::seqlevelsStyle(genome) <- "NCBI"
 genome@seqnames=gsub("chr","",genome@seqnames)
-chromosomes = as.character(c(seq(22), "X"))
+chromosomes = as.character(c(seq(22), "X","Y"))
 genome = genome[chromosomes]
 
 
@@ -87,7 +87,7 @@ for (j in 1:length(cluster_list)){
 
   seq=unlist(strsplit(unique(chrss_j$link_chromosome), split="_"))
   seq=gsub("X","23",seq)
-
+  seq=gsub("Y","24",seq)
   seq=as.numeric(seq)
 
   cnv=cnv_total[cnv_total$sample==unique(chrss_j$sample),]
@@ -95,7 +95,7 @@ for (j in 1:length(cluster_list)){
   cnv_backup=cnv[c("chromosome","start","end","total_cn")]
   cnv_backup=cnv_backup[cnv_backup$chromosome %in% chrlist,]
   cnv$chromosome=gsub("X","23",cnv$chromosome)
-
+  cnv$chromosome=gsub("Y","24",cnv$chromosome)
 
   sv.data.raw <- sv_file[sv_file$sample==unique(chrss_j$sample),]
   sv.data=sv.data.raw
@@ -104,7 +104,8 @@ for (j in 1:length(cluster_list)){
   # colnames(sv.data)[11] <- "svtype"
   sv.data$chrom1=gsub("X","23",sv.data$chrom1)
   sv.data$chrom2=gsub("X","23",sv.data$chrom2)
-
+  sv.data$chrom1=gsub("Y","24",sv.data$chrom1)
+  sv.data$chrom2=gsub("Y","24",sv.data$chrom2)
 
   sv.data=sv.data[sv.data$chrom1 %in% seq | sv.data$chrom2 %in% seq,]
   sv.data$pos1=ifelse(sv.data$chrom1 %!in% seq,sv.data$end2-2,sv.data$end1)
@@ -117,13 +118,14 @@ for (j in 1:length(cluster_list)){
 
   sv.data$chrom1=gsub("23","X",sv.data$chrom1)
   sv.data$chrom2=gsub("23","X",sv.data$chrom2)
-
+  sv.data$chrom1=gsub("24","Y",sv.data$chrom1)
+  sv.data$chrom2=gsub("24","Y",sv.data$chrom2)
 
   if (length(sv.data$chrom1)>0){
     cnv=cnv[cnv$chromosome %in% seq,]
     region=chrss[chrss$cluster_id==cluster_list[j],]
     region$chr=gsub("X","23",region$chr)
-
+    region$chr=gsub("Y","24",region$chr)
 
 
     ##### Get the SV chromosomes...
@@ -240,7 +242,7 @@ for (j in 1:length(cluster_list)){
 
     cnv=na.omit(cnv)
     cnv$chromosome=gsub("23","X",cnv$chromosome)
-
+    cnv$chromosome=gsub("24","Y",cnv$chromosome)
 
 
     boundary=as.data.frame(c(unlist(chrs_boundary.pos),unlist(chrs_fake_starts)))
@@ -257,7 +259,7 @@ for (j in 1:length(cluster_list)){
     title_size=1.5
 
     region$chr=gsub("23","X",region$chr)
-
+    region$chr=gsub("24","Y",region$chr)
 
     link_region=region[region$CGR_status=="link",]
     chrss_region=region[region$CGR_status=="CGR",]

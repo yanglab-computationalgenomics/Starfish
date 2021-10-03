@@ -1,5 +1,6 @@
-Package: Starfish
-Title: Detecting connected CGR regions and inferring mechanisms from structure variation and copy number data
+Package: Starfishy
+Title: Detecting connected CGR regions and inferring mechanisms from
+        structure variation and copy number data
 Version: 0.1.0
 Date: 2021-03-29
 Authors@R: 
@@ -9,14 +10,17 @@ Authors@R:
            email = "lisuibao@outlook.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Depends: R (>= 3.0.1),methods,BiocGenerics,foreach,graph,S4Vectors
-Imports: ShatterSeek,GenomeInfoDb,plyr,data.table,GenomicRanges,IRanges,MASS,ggplot2,grid,gridExtra,dplyr,ConsensusClusterPlus,gplots,dendextend,ggpubr,cowplot,scales,patchwork,ggforce,Cairo
+Imports:
+        ShatterSeek,GenomeInfoDb,plyr,data.table,GenomicRanges,IRanges,MASS,ggplot2,grid,gridExtra,dplyr,ConsensusClusterPlus,gplots,dendextend,ggpubr,cowplot,scales,patchwork,ggforce,Cairo
 Description: Starfish is developed for detecting connected complex genome rearrangement regions and inferring their mechanisms by classification.
 License: `use_gpl3_license()`
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Suggests: 
-    rmarkdown,
-    knitr
+Suggests: rmarkdown, knitr
 VignetteBuilder: knitr
+NeedsCompilation: no
+Packaged: 2021-10-01 06:17:37 UTC; bb
+Author: Lisui Bao [aut, cre] (YOUR-ORCID-ID)
+Maintainer: Lisui Bao <lisuibao@outlook.com>

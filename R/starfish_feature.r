@@ -25,7 +25,7 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
   }
 
 
-  chrlist=c(as.character(1:22),"X")
+  chrlist=c(as.character(1:22),"X","Y")
   cgr$range_size=cgr$end-cgr$start+1
   cgr$chr=as.character(cgr$chr)
   chrlength$chrom=as.character(chrlength$chrom)
@@ -195,7 +195,7 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
 
         if (donor_sex=="Male"){
 
-          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$total_cn>2*gain_factor)) ,"gain","neutral"))
+          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$chromosome!="Y"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)|(cnv$chromosome=="Y"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$chromosome!="Y"&cnv$total_cn>2*gain_factor)|(cnv$chromosome=="Y"&cnv$total_cn>1*gain_factor)) ,"gain","neutral"))
 
         } else {
 
@@ -214,7 +214,7 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
         }
         if (donor_sex=="Male"){
 
-          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$total_cn>2*gain_factor)) ,"gain","neutral"))
+          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$chromosome!="Y"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)|(cnv$chromosome=="Y"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$chromosome!="Y"&cnv$total_cn>2*gain_factor)|(cnv$chromosome=="Y"&cnv$total_cn>1*gain_factor)) ,"gain","neutral"))
 
         } else {
 
@@ -232,7 +232,7 @@ starfish_feature=function(cgr,complex_sv,cnv_file,gender_file,prefix="",genome_v
         }
         if (donor_sex=="Male"){
 
-          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$total_cn>2*gain_factor)) ,"gain","neutral"))
+          cnv$copy_loss=ifelse((cnv$total_cn<(cnv$background_cnv*loss_factor)|(cnv$chromosome!="X"&cnv$chromosome!="Y"&cnv$total_cn<2*loss_factor)|(cnv$chromosome=="X"&cnv$total_cn<1*loss_factor)|(cnv$chromosome=="Y"&cnv$total_cn<1*loss_factor)),"deletion",ifelse((cnv$total_cn>cnv$background_cnv*gain_factor)&((cnv$chromosome=="X"&cnv$total_cn>1*gain_factor)|(cnv$chromosome!="X"&cnv$chromosome!="Y"&cnv$total_cn>2*gain_factor)|(cnv$chromosome=="Y"&cnv$total_cn>1*gain_factor)) ,"gain","neutral"))
 
         } else {
 

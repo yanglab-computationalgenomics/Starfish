@@ -9,7 +9,7 @@
 #' @export
 starfish_link=function(sv_file,prefix=""){
 
-  chrlist=c(as.character(1:22),"X")
+  chrlist=c(as.character(1:22),"X","Y")
 
   svtotal=unique(sv_file)
   ########## no "chr" in chromosome name #######
@@ -37,10 +37,10 @@ starfish_link=function(sv_file,prefix=""){
 
     SV =svtotal[svtotal$sample==samplelist[i],]
     cnv=cnvtotal
-    SVSample <- ShatterSeek::SVs(chrom1=as.character(SV$chrom1), pos1=as.numeric(SV$end1),chrom2=as.character(SV$chrom2), pos2=as.numeric(SV$end2),SVtype=as.character(SV$svtype),strand1=as.character(SV$strand1),strand2=as.character(SV$strand2))
+    SVSample <- ShatterSeeky::SVs(chrom1=as.character(SV$chrom1), pos1=as.numeric(SV$end1),chrom2=as.character(SV$chrom2), pos2=as.numeric(SV$end2),SVtype=as.character(SV$svtype),strand1=as.character(SV$strand1),strand2=as.character(SV$strand2))
 
-    CN_data=ShatterSeek::CNVsegs(chrom=as.character(cnv$chromosome),start=as.numeric(cnv$start),end=as.numeric(cnv$end),total_cn=as.numeric(cnv$total_cn))
-    chromothripsis6 <- ShatterSeek::shatterseek(SV.sample=SVSample,seg.sample=CN_data,min.Size=6)
+    CN_data=ShatterSeeky::CNVsegs(chrom=as.character(cnv$chromosome),start=as.numeric(cnv$start),end=as.numeric(cnv$end),total_cn=as.numeric(cnv$total_cn))
+    chromothripsis6 <- ShatterSeeky::shatterseek(SV.sample=SVSample,seg.sample=CN_data,min.Size=6)
     chrss6=chromothripsis6@chromSummary
     chrss6$sample=samplelist[i]
 
@@ -48,7 +48,7 @@ starfish_link=function(sv_file,prefix=""){
 
     ########## 3 interleaved SVs #################
 
-    chromothripsis3 <- ShatterSeek::shatterseek(SV.sample=SVSample,seg.sample=CN_data,min.Size=3)
+    chromothripsis3 <- ShatterSeeky::shatterseek(SV.sample=SVSample,seg.sample=CN_data,min.Size=3)
     chrss3=chromothripsis3@chromSummary
     chrss3$sample=samplelist[i]
     ss3=rbind(ss3,chrss3)
