@@ -163,7 +163,7 @@ starfish_link=function(sv_file,prefix=""){
         }
       }
     }
-
+   
     if(nrow(ss)>0){
 
       ss$format_id=paste0(ss$sample,"_",ss$chr)
@@ -206,7 +206,7 @@ starfish_link=function(sv_file,prefix=""){
         }
       }
       # assign start and end based on chrss cluster
-
+      if(nrow(linkss2)>0){
       linkss2=merge(linkss2,chrss[,c("format_id","start","end")],by.x=("format_id"),by.y=("format_id"),all.x=T)
       linkss2$start=ifelse(!is.na(linkss2$start.y),ifelse(linkss2$start.x<linkss2$start.y,linkss2$start.x,linkss2$start.y),linkss2$start.x)
       linkss2$end=ifelse(!is.na(linkss2$end.y),ifelse(linkss2$end.x>linkss2$end.y,linkss2$end.x,linkss2$end.y),linkss2$end.x)
@@ -232,6 +232,9 @@ starfish_link=function(sv_file,prefix=""){
 
         linkss3=rbind(linkss3,linkss)
 
+      }
+      } else {
+        linkss3=chrss[c("chr","start","end","chrss_chr","sample","format_id","chrss_status")]
       }
     } else {
       linkss3=chrss[c("chr","start","end","chrss_chr","sample","format_id","chrss_status")]
@@ -318,23 +321,47 @@ starfish_link=function(sv_file,prefix=""){
     if(nrow(svss)>0){
       svlist3=chrsslink1[chrsslink1$sample==samplelist[i],]
       svss$complex=0
-
+      svss$cluster_id=""
       for (j in 1:length(svss$chrom1)){
         t1=0
         t2=0
+        clusterid1=""
+        clusterid2=""
         for (k in 1:length(svlist3$chr)){
+          
           t1=ifelse(svss$chrom1[j]==svlist3$chr[k] & svss$end1[j]>=svlist3$start[k] & svss$end1[j]<=svlist3$end[k],1,0)+t1
+          
+          cluster_new1=ifelse(svss$chrom1[j]==svlist3$chr[k] & svss$end1[j]>=svlist3$start[k] & svss$end1[j]<=svlist3$end[k],svlist3$cluster_id[k],"")
+          clusterid1=ifelse(cluster_new1!="",cluster_new1,clusterid1)
+          
+          
         }
         for (k in 1:length(svlist3$chr)){
           t2=ifelse(svss$chrom2[j]==svlist3$chr[k] & svss$end2[j]>=svlist3$start[k] & svss$end2[j]<=svlist3$end[k],1,0)+t2
+          cluster_new2=ifelse(svss$chrom2[j]==svlist3$chr[k] & svss$end2[j]>=svlist3$start[k] & svss$end2[j]<=svlist3$end[k],svlist3$cluster_id[k],"")
+          clusterid2=ifelse(cluster_new2!="",cluster_new2,clusterid2)
+          
         }
         svss$complex[j]=t1+t2
+        
+        if(clusterid1==clusterid2&clusterid1!=""){
+          clusternew=clusterid1
+        } else if(clusterid1==""&clusterid2!=""){
+          clusternew=clusterid2
+        }else if(clusterid1!=""&clusterid2==""){
+          clusternew=clusterid1
+        } else if(clusterid1!=clusterid2&clusterid1!=""&clusterid2!=""){
+          clusternew=paste0(clusterid1,",",clusterid2)
+        } else if(clusterid1==""&clusterid2==""){
+          clusternew=","
+        }
+        svss$cluster_id[j]=clusternew
       }
 
 
       svss2=svss[svss$complex>1,]
       if(nrow(svss2)>0){
-        svss2=svss2[c("chrom1","end1","chrom2","end2","svtype","complex")]
+        svss2=svss2[c("chrom1","end1","chrom2","end2","svtype","complex","cluster_id")]
         svss2$sample=samplelist[i]
 
         ssmatrix=rbind(ssmatrix,svss2)
@@ -345,7 +372,12 @@ starfish_link=function(sv_file,prefix=""){
 
 
   smatrix2=unique(ssmatrix)
-  colnames(smatrix2)=c("chrom1","pos1","chrom2","pos2","svtype","complex","sample")
+  
+  ##### remove different or none CGR SVs #########
+  smatrix2$comman <- lengths(regmatches(smatrix2$cluster_id, gregexpr(",", smatrix2$cluster_id)))
+  smatrix2=smatrix2[smatrix2$comman==0,]
+  smatrix2=smatrix2[c("chrom1","end1","chrom2","end2","svtype","complex","sample","cluster_id")]
+  colnames(smatrix2)=c("chrom1","pos1","chrom2","pos2","svtype","complex","sample","cluster_id")
   mergecall$call3=gsub("chrss","CGR",mergecall$call3)
   mergecall$call6=gsub("chrss","CGR",mergecall$call6)
 
