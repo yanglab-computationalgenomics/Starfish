@@ -342,7 +342,7 @@ for (j in 1:length(cluster_list)){
 
 
     pdfname=paste0(unique(chrss_j$code4),cluster_list[j],"_chrss.pdf")
-    ggbio::ggsave(pdfname,plot=p3,width=3,height=3,device = cairo_pdf)
+    ggbio::ggsave(pdfname,plot=p3,width=3,height=3,units="in",device = cairo_pdf)
 
   }
 }
